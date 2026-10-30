@@ -1,0 +1,68 @@
+---
+title: "Documenting an R Script: Synthetic Sales Summary"
+author: "Sudheer Kumar Aki"
+date: "2026-10-30"
+output: html_document
+---
+
+> **AI Assistance Declaration:** I used ChatGPT (GPT-6, October 30, 2026) to suggest structure and formatting. Prompts are listed in `AI_Prompts_Appendix.md`. I must verify all explanations and run/knit the document myself. All final calculations are my responsibility.
+
+# Purpose
+
+This document explains an R script that simulates 12 sales orders, calculates totals by region, and displays a bar chart. All records are synthetic.
+
+## Inputs
+
+- A fixed random seed (`400`) for reproducibility.
+- Three fictional regions: East, West, and Central.
+- Twelve simulated sales amounts between 50 and 250 units.
+- No uploaded data files or external dependencies for analysis.
+
+## Data Preparation
+
+```{r create-synthetic-data}
+set.seed(400)
+sales <- data.frame(
+  order_id = seq_len(12),
+  region = rep(c("East", "West", "Central"), each = 4),
+  amount = round(runif(12, min = 50, max = 250), 2)
+)
+head(sales)
+```
+
+## Processing and Summary
+
+The base R `aggregate()` function adds order amounts within each region.
+
+```{r regional-totals}
+region_totals <- aggregate(amount ~ region, data = sales, FUN = sum)
+print(region_totals)
+```
+
+## Outputs
+
+The main outputs are a region-level summary table and a simple bar chart.
+
+```{r sales-bar-chart, fig.width=7, fig.height=4}
+barplot(region_totals$amount,
+        names.arg = region_totals$region,
+        main = "Synthetic Sales by Region",
+        ylab = "Sales Amount")
+```
+
+## Interpretation and Validation
+
+- Check that 12 rows are generated and there are four orders per region.
+- Confirm the sum of the regional totals equals the sum of all 12 sales amounts.
+- Confirm the three bars correspond to the three summary rows.
+- Run **Knit** in RStudio and inspect the rendered headings, R code, table, and figure.
+
+```{r verification}
+stopifnot(nrow(sales) == 12)
+stopifnot(all(table(sales$region) == 4))
+stopifnot(isTRUE(all.equal(sum(region_totals$amount), sum(sales$amount))))
+```
+
+## Limitations
+
+This is a teaching example, not an estimate of real sales. Any conclusions should be limited to the simulated values.
